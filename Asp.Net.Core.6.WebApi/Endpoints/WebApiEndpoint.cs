@@ -10,15 +10,17 @@ public static class WebApiEndpoint
 
     public static void MapWebApiService(this IEndpointRouteBuilder app)
     {
-        app.MapGet(BaseUrl, async (context) =>
+        app.MapGet(BaseUrl, () =>
         {
-            var newsService = context.RequestServices.GetService<INewsService>();
-            await context.Response.WriteAsJsonAsync(newsService?.Get());
-        });
+            var newsService = app.ServiceProvider.GetService<INewsService>();
+            return newsService?.Get();
+        })
+        .WithName("GetAllNewsModels")
+        .Produces<IEnumerable<NewsModel>?>(StatusCodes.Status200OK);
 
-        app.MapPost(BaseUrl, (HttpContext context, [FromBody] NewsModelDto newsModelDto) =>
+        app.MapPost(BaseUrl, ([FromBody] NewsModelDto newsModelDto) =>
         {
-            var newsService = context.RequestServices.GetService<INewsService>();
+            var newsService = app.ServiceProvider.GetService<INewsService>();
             var newsModel = new NewsModel()
             {
                 Title = newsModelDto.Title,
@@ -42,4 +44,42 @@ public static class WebApiEndpoint
             await context.Response.WriteAsync("filename");
         });
     }
+
+	/*public static void MapNewsModelEndpoints (this IEndpointRouteBuilder routes)
+    {
+        routes.MapGet("/api/NewsModel", () =>
+        {
+            return new [] { new NewsModel() };
+        })
+        .WithName("GetAllNewsModels")
+        .Produces<NewsModel[]>(StatusCodes.Status200OK);
+
+        routes.MapGet("/api/NewsModel/{id}", (int id) =>
+        {
+            //return new NewsModel { ID = id };
+        })
+        .WithName("GetNewsModelById")
+        .Produces<NewsModel>(StatusCodes.Status200OK);
+
+        routes.MapPut("/api/NewsModel/{id}", (int id, NewsModel input) =>
+        {
+            return Results.NoContent();
+        })
+        .WithName("UpdateNewsModel")
+        .Produces(StatusCodes.Status204NoContent);
+
+        routes.MapPost("/api/NewsModel/", (NewsModel model) =>
+        {
+            //return Results.Created($"//api/NewsModels/{model.ID}", model);
+        })
+        .WithName("CreateNewsModel")
+        .Produces<NewsModel>(StatusCodes.Status201Created);
+
+        routes.MapDelete("/api/NewsModel/{id}", (int id) =>
+        {
+            //return Results.Ok(new NewsModel { ID = id });
+        })
+        .WithName("DeleteNewsModel")
+        .Produces<NewsModel>(StatusCodes.Status200OK);
+    }*/
 }
