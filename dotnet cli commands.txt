@@ -1,0 +1,9 @@
+dotnet new globaljson --sdk-version 6.0.422 -o Asp.Net.Core.6
+dotnet new gitignore -o Asp.Net.Core.6
+dotnet new web --no-https --framework net6.0 -o Asp.Net.Core.6/Asp.Net.Core.6.WebApi
+dotnet new sln -o Asp.Net.Core.6
+dotnet sln TSI.Exchange add Asp.Net.Core.6/Asp.Net.Core.6.WebApi
+
+
+
+
