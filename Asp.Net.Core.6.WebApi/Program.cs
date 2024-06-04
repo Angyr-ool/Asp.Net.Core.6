@@ -1,3 +1,6 @@
+using Asp.Net.Core._6.WebApi.Endpoints;
+using Asp.Net.Core._6.WebApi.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile(opts =>
@@ -19,8 +22,16 @@ builder.Configuration.AddJsonFile(opts =>
     opts.ReloadOnChange = false;
 });
 
+builder.Services.AddSingleton<INewsService, NewsService>();
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
+app.UseRouting();
+
+app.UseEndpoints(endpoints => 
+{
+    endpoints.MapGet("/", () => "ASP.NET Core Web API");
+    endpoints.MapWebApiService();
+});
 
 app.Run();
